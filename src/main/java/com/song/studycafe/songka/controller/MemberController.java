@@ -15,6 +15,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
+
     @GetMapping("/me")
     public ResponseEntity<MemberResponseDto> getMyMemberInfo() {
         MemberResponseDto myInfoBySecurity = memberService.getMyInfoBySecurity();

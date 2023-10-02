@@ -7,12 +7,15 @@ import com.song.studycafe.songka.entity.Member;
 import com.song.studycafe.songka.repository.MemberRepository;
 import com.song.studycafe.songka.utills.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +40,7 @@ public class AuthService {
     public TokenDto login(MemberRequestDto requestDto) {
         UsernamePasswordAuthenticationToken authenticationToken = requestDto.toAuthentication();
         Authentication authentication = managerBuilder.getObject().authenticate(authenticationToken);
-        return tokenProvider.generatedTokenDto(authentication);
+        Optional<Member> findMember = memberRepository.findByEmail(requestDto.getEmail());
+        return tokenProvider.generatedTokenDto(authentication, findMember);
     }
 }

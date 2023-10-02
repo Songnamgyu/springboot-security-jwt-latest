@@ -1,6 +1,8 @@
 package com.song.studycafe.songka.utills.jwt;
 
+import com.song.studycafe.songka.dto.MemberRequestDto;
 import com.song.studycafe.songka.dto.TokenDto;
+import com.song.studycafe.songka.entity.Member;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -15,9 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -34,6 +34,7 @@ public class TokenProvider {
 
 
 
+
     // 주의점: 여기서 @Value는 `springframework.beans.factory.annotation.Value`소속이다!
     // lombok의 @Value와 착각하지 말것!
     //     * @param secretKey
@@ -44,7 +45,7 @@ public class TokenProvider {
 
 
     //토큰 생성
-    public TokenDto generatedTokenDto(Authentication authentication) {
+    public TokenDto generatedTokenDto(Authentication authentication, Optional<Member> findMember) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -55,9 +56,12 @@ public class TokenProvider {
 
         System.out.println("tokenExpiresIn = " + tokenExpiresIn);
 
+
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
+                .claim("email", findMember.get().getEmail())
+                .claim("nickname", findMember.get().getNickname())
                 .setExpiration(tokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();

@@ -15,6 +15,7 @@ public class MemberResponseDto {
     private String email;
     private String nickName;
 
+
     public static  MemberResponseDto of(Member member) {
         return MemberResponseDto.builder()
                 .email(member.getEmail())
